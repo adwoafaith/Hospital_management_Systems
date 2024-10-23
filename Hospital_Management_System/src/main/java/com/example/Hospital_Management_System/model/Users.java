@@ -19,5 +19,8 @@ import lombok.NoArgsConstructor;
 
         private String email;
         private String password;
+
+        @Enumerated(EnumType.STRING)
+        private Role role;
     }
 

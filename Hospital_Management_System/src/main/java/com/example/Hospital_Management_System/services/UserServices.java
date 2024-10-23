@@ -1,5 +1,8 @@
 package com.example.Hospital_Management_System.services;
 
+import com.example.Hospital_Management_System.model.Role;
+import jakarta.mail.MessagingException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.Hospital_Management_System.model.Users;
 import com.example.Hospital_Management_System.repository.UserRepository;
@@ -10,9 +13,14 @@ import org.springframework.stereotype.Service;
 public class UserServices {
     @Autowired
     private UserRepository userRepository;
+    private String email = "superadmin@gmail.com";
+    private String password = "superAdmin@";
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     public void seedSuperAdmin() {
         try {
@@ -20,10 +28,12 @@ public class UserServices {
             long userCount = userRepository.count();
             System.out.println("Current user count: " + userCount);
 
+            //checking if a super admin already exist
             if (userCount == 0) {
                 Users superAdmin = Users.builder()
-                        .email("superadmin@gmail.com")
-                        .password(passwordEncoder.encode("superAdmin@"))
+                        .email(email)
+                        .password(passwordEncoder.encode(password))
+                        .role(Role.SUPER_ADMIN)
                         .build();
 
                 Users savedUser = userRepository.save(superAdmin);
@@ -35,5 +45,44 @@ public class UserServices {
             System.err.println("Error seeding super admin: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void addAdmin(String adminEmail){
+        String defaultPassword = generateRandomPassword();
+        Users admin = Users.builder()
+                .email(adminEmail)
+                .password(passwordEncoder.encode(defaultPassword))
+                .role(Role.ADMIN)
+                .build();
+        userRepository.save(admin);
+        try {
+            emailService.sendEmail(adminEmail, "Admin Account Created", adminEmail, adminEmail, defaultPassword);
+        } catch (MessagingException e) {
+            System.err.println("Failed to send email to admin: " + e.getMessage());
+        }
+    }
+
+    public void addUser(String userEmail, Role role){
+        String defaultUserPassword = generateRandomPassword();
+
+        Users user = Users.builder()
+                .email(userEmail)
+                .password(passwordEncoder.encode(defaultUserPassword))
+                .role(role)
+                .build();
+
+        userRepository.save(user);
+
+        // Send email with login credentials
+        try {
+            emailService.sendEmail(userEmail, "User Account Created", userEmail, userEmail, defaultUserPassword);
+        } catch (MessagingException e) {
+            System.err.println("Failed to send email to user: " + e.getMessage());
+        }
+
+    }
+
+    private  String generateRandomPassword(){
+        return RandomStringUtils.randomAlphanumeric(10);
     }
 }
