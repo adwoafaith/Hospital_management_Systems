@@ -3,7 +3,6 @@ package com.example.Hospital_Management_System.services;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -12,15 +11,14 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+
+    private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
 
     @Async

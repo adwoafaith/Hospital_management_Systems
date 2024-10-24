@@ -47,7 +47,11 @@ public class UserServices {
         }
     }
 
-    public void addAdmin(String adminEmail){
+    public String addAdmin(String adminEmail){
+
+        if (userRepository.existsByEmail(adminEmail)){
+            return "User with email" + " " + adminEmail + " " + "already exists";
+        }
         String defaultPassword = generateRandomPassword();
         Users admin = Users.builder()
                 .email(adminEmail)
@@ -60,9 +64,13 @@ public class UserServices {
         } catch (MessagingException e) {
             System.err.println("Failed to send email to admin: " + e.getMessage());
         }
+        return "Admin added successfully";
     }
 
-    public void addUser(String userEmail, Role role){
+    public String addUser(String userEmail, Role role){
+        if (userRepository.existsByEmail(userEmail)){
+            return "User with email "+ userEmail + " already exists";
+        }
         String defaultUserPassword = generateRandomPassword();
 
         Users user = Users.builder()
@@ -79,7 +87,7 @@ public class UserServices {
         } catch (MessagingException e) {
             System.err.println("Failed to send email to user: " + e.getMessage());
         }
-
+        return "User added successfully";
     }
 
     private  String generateRandomPassword(){

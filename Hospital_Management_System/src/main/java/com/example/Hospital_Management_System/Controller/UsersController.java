@@ -12,31 +12,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class UsersController {
+
     @Autowired
     private UserServices userServices;
 
-    @PostMapping("/superadmin/seed")
+    @PostMapping("add/superadmin/seed")
     public ResponseEntity<String> seedUser() {
         userServices.seedSuperAdmin();
         return ResponseEntity.ok("User seeded successfully");
     }
 
-    @PostMapping("/addAdmin")
-    public ResponseEntity<String>addAdmin(@RequestParam String email){
-        userServices.addAdmin(email);
-        return ResponseEntity.ok("Admin added successfully");
+    @PostMapping("add/addAdmin")
+    public ResponseEntity<String> addAdmin(@RequestParam String email) {
+        String result = userServices.addAdmin(email);
+        return ResponseEntity.ok(result);
     }
 
 
-    @PostMapping("/seed")
-    public ResponseEntity<String> Addusers() {
-        userServices.seedSuperAdmin();
-        return ResponseEntity.ok("User seeded successfully");
-    }
-
-    @PostMapping("/addUser")
+    @PostMapping("add/addUser")
     public ResponseEntity<String> addUser(@RequestParam String email, @RequestParam Role role) {
-        userServices.addUser(email, role);
-        return ResponseEntity.ok("User added successfully");
+        String result = userServices.addUser(email, role);
+        return ResponseEntity.ok(result);
     }
 }
