@@ -9,4 +9,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthResponse {
     private  String jwt;
+    private final String status;
 }
